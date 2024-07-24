@@ -1,25 +1,27 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { Suspense, lazy } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';  // Cập nhật từ Switch sang Routes
+import PatientContextProvider from './context/PatientContext';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { loadWithDelay } from './utils/loadWithDelay';
 
-function App() {
+const LoginForm = lazy(()=> loadWithDelay(() => import('./components/LoginForm'),2000));
+const PatientManagement = lazy(()=> loadWithDelay(() => import('./components/PatientManagement'),2000));
+
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <PatientContextProvider>
+        <div className="container">
+        <Suspense fallback={<div>Loading...</div>}>
+          <Routes>  {/* Sử dụng Routes thay vì Switch */}
+            <Route path="/" element={<LoginForm />} />  {/* Sử dụng element thay vì component */}
+            <Route path="/patients" element={<PatientManagement />} />  {/* Sử dụng element thay vì component */}
+          </Routes>
+          </Suspense>
+        </div>
+      </PatientContextProvider>
+    </Router>
   );
-}
+};
 
 export default App;
